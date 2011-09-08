@@ -1,0 +1,2 @@
+# Blog
+# require "blog/routing"

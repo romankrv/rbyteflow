@@ -1,0 +1,16 @@
+<h1>Listing posts</h1>
+
+<% @posts.each do |post| %>
+  <h2><%= link_to post.name, post %></h2>
+  <div><%= raw post.tease %></div>
+  <div>
+    <%= link_to 'More >>', post %> 
+    <%= link_to 'Edit', edit_post_path(post) %> 
+    <%= link_to 'Destroy', post, :confirm => 'Are you sure?', :method => :delete %>
+  </div>
+<% end %>
+<%= will_paginate @posts %>
+
+<br />
+
+<%= link_to 'New post', new_post_path %>

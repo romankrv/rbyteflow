@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<h1><%= @post.name %></h1>
+<div><%= raw @post.html %></div>
+
+<div><b>Author:</b> <%= @post.author.username %></div>
+<div><b>Date:</b> <%= @post.date %></div>
+<div><b>Upd date:</b> <%= @post.upd_date %></div>
+<div><b>Tags:</b> <%= @post.tags %></div>
+
+
+
+<%= link_to 'Edit', edit_post_path(@post) %> |
+<%= link_to 'Back', posts_path %>
