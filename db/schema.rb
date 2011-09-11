@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 20110911022038) do
 
   create_table "actionrecord", :force => true do |t|
     t.integer  "user_id",                  :null => false
@@ -53,18 +53,19 @@ ActiveRecord::Schema.define(:version => 0) do
   add_index "auth_permission", ["content_type_id"], :name => "auth_permission_content_type_id"
 
   create_table "auth_user", :force => true do |t|
-    t.string   "username",     :limit => 30,  :null => false
-    t.string   "first_name",   :limit => 30,  :null => false
-    t.string   "last_name",    :limit => 30,  :null => false
-    t.string   "email",        :limit => 75,  :null => false
-    t.string   "password",     :limit => 128, :null => false
-    t.boolean  "is_staff",                    :null => false
-    t.boolean  "is_active",                   :null => false
-    t.boolean  "is_superuser",                :null => false
-    t.datetime "last_login",                  :null => false
-    t.datetime "date_joined",                 :null => false
-    t.string   "site",         :limit => 200, :null => false
-    t.string   "email_new",    :limit => 75,  :null => false
+    t.string   "username",          :limit => 30,  :null => false
+    t.string   "first_name",        :limit => 30,  :null => false
+    t.string   "last_name",         :limit => 30,  :null => false
+    t.string   "email",             :limit => 75,  :null => false
+    t.string   "password",          :limit => 128, :null => false
+    t.boolean  "is_staff",                         :null => false
+    t.boolean  "is_active",                        :null => false
+    t.boolean  "is_superuser",                     :null => false
+    t.datetime "last_login",                       :null => false
+    t.datetime "date_joined",                      :null => false
+    t.string   "site",              :limit => 200, :null => false
+    t.string   "email_new",         :limit => 75,  :null => false
+    t.string   "persistence_token"
   end
 
   add_index "auth_user", ["username"], :name => "auth_user_username_key", :unique => true
@@ -111,19 +112,23 @@ ActiveRecord::Schema.define(:version => 0) do
   add_index "blog_post", ["slug"], :name => "blog_post_slug_like"
 
   create_table "comment_nodes", :force => true do |t|
-    t.integer  "user_id",         :null => false
-    t.datetime "pub_date",        :null => false
-    t.datetime "upd_date",        :null => false
-    t.text     "body",            :null => false
-    t.text     "body_html",       :null => false
+    t.integer  "user_id",          :null => false
+    t.datetime "pub_date",         :null => false
+    t.datetime "upd_date",         :null => false
+    t.text     "body",             :null => false
+    t.text     "body_html",        :null => false
     t.integer  "reply_to_id"
-    t.boolean  "approved",        :null => false
-    t.integer  "content_type_id", :null => false
-    t.integer  "object_id",       :null => false
-    t.integer  "lft",             :null => false
-    t.integer  "rght",            :null => false
+    t.boolean  "approved",         :null => false
+    t.integer  "content_type_id",  :null => false
+    t.integer  "object_id",        :null => false
+    t.integer  "lft",              :null => false
+    t.integer  "rght",             :null => false
+    t.integer  "commentable_id"
+    t.string   "commentable_type"
   end
 
+  add_index "comment_nodes", ["commentable_id"], :name => "comment_nodes_commentable_id"
+  add_index "comment_nodes", ["commentable_type"], :name => "comment_nodes_commentable_type"
   add_index "comment_nodes", ["content_type_id"], :name => "comment_nodes_content_type_id"
   add_index "comment_nodes", ["lft"], :name => "comment_nodes_lft"
   add_index "comment_nodes", ["object_id"], :name => "comment_nodes_object_id"
@@ -278,6 +283,299 @@ ActiveRecord::Schema.define(:version => 0) do
 
   add_index "pingback_directoryping", ["content_type_id"], :name => "pingback_directoryping_content_type_id"
 
+  create_table "portfolio_category", :force => true do |t|
+    t.string   "status",            :limit => 20,  :null => false
+    t.string   "language",          :limit => 8,   :null => false
+    t.integer  "order",                            :null => false
+    t.integer  "creator_id",                       :null => false
+    t.integer  "editor_id",                        :null => false
+    t.datetime "publish",                          :null => false
+    t.datetime "unpublish"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.datetime "deleted_at"
+    t.string   "name",              :limit => 250, :null => false
+    t.string   "slug",              :limit => 250, :null => false
+    t.string   "description",       :limit => 250, :null => false
+    t.integer  "translation_of_id"
+  end
+
+  add_index "portfolio_category", ["creator_id"], :name => "portfolio_category_creator_id"
+  add_index "portfolio_category", ["editor_id"], :name => "portfolio_category_editor_id"
+  add_index "portfolio_category", ["language"], :name => "portfolio_category_language"
+  add_index "portfolio_category", ["language"], :name => "portfolio_category_language_like"
+  add_index "portfolio_category", ["name"], :name => "portfolio_category_name"
+  add_index "portfolio_category", ["name"], :name => "portfolio_category_name_like"
+  add_index "portfolio_category", ["order"], :name => "portfolio_category_order"
+  add_index "portfolio_category", ["publish"], :name => "portfolio_category_publish"
+  add_index "portfolio_category", ["slug"], :name => "portfolio_category_slug_key", :unique => true
+  add_index "portfolio_category", ["status"], :name => "portfolio_category_status"
+  add_index "portfolio_category", ["status"], :name => "portfolio_category_status_like"
+  add_index "portfolio_category", ["translation_of_id"], :name => "portfolio_category_translation_of_id"
+
+  create_table "portfolio_category_sites", :force => true do |t|
+    t.integer "category_id", :null => false
+    t.integer "site_id",     :null => false
+  end
+
+  add_index "portfolio_category_sites", ["category_id", "site_id"], :name => "portfolio_category_sites_category_id_key", :unique => true
+  add_index "portfolio_category_sites", ["category_id"], :name => "portfolio_category_sites_category_id"
+  add_index "portfolio_category_sites", ["site_id"], :name => "portfolio_category_sites_site_id"
+
+  create_table "portfolio_client", :force => true do |t|
+    t.string   "status",            :limit => 20,  :null => false
+    t.string   "language",          :limit => 8,   :null => false
+    t.integer  "order",                            :null => false
+    t.integer  "creator_id",                       :null => false
+    t.integer  "editor_id",                        :null => false
+    t.datetime "publish",                          :null => false
+    t.datetime "unpublish"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.datetime "deleted_at"
+    t.string   "name",              :limit => 250, :null => false
+    t.string   "slug",              :limit => 250, :null => false
+    t.string   "description",       :limit => 250, :null => false
+    t.integer  "translation_of_id"
+  end
+
+  add_index "portfolio_client", ["creator_id"], :name => "portfolio_client_creator_id"
+  add_index "portfolio_client", ["editor_id"], :name => "portfolio_client_editor_id"
+  add_index "portfolio_client", ["language"], :name => "portfolio_client_language"
+  add_index "portfolio_client", ["language"], :name => "portfolio_client_language_like"
+  add_index "portfolio_client", ["name"], :name => "portfolio_client_name"
+  add_index "portfolio_client", ["name"], :name => "portfolio_client_name_like"
+  add_index "portfolio_client", ["order"], :name => "portfolio_client_order"
+  add_index "portfolio_client", ["publish"], :name => "portfolio_client_publish"
+  add_index "portfolio_client", ["slug"], :name => "portfolio_client_slug_key", :unique => true
+  add_index "portfolio_client", ["status"], :name => "portfolio_client_status"
+  add_index "portfolio_client", ["status"], :name => "portfolio_client_status_like"
+  add_index "portfolio_client", ["translation_of_id"], :name => "portfolio_client_translation_of_id"
+
+  create_table "portfolio_client_sites", :force => true do |t|
+    t.integer "client_id", :null => false
+    t.integer "site_id",   :null => false
+  end
+
+  add_index "portfolio_client_sites", ["client_id", "site_id"], :name => "portfolio_client_sites_client_id_key", :unique => true
+  add_index "portfolio_client_sites", ["client_id"], :name => "portfolio_client_sites_client_id"
+  add_index "portfolio_client_sites", ["site_id"], :name => "portfolio_client_sites_site_id"
+
+  create_table "portfolio_element", :force => true do |t|
+    t.string   "status",            :limit => 20,  :null => false
+    t.string   "language",          :limit => 8,   :null => false
+    t.integer  "order",                            :null => false
+    t.integer  "creator_id",                       :null => false
+    t.integer  "editor_id",                        :null => false
+    t.datetime "publish",                          :null => false
+    t.datetime "unpublish"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.datetime "deleted_at"
+    t.string   "name",              :limit => 250, :null => false
+    t.string   "photo",             :limit => 100, :null => false
+    t.string   "url",               :limit => 250, :null => false
+    t.string   "description",       :limit => 250, :null => false
+    t.text     "body",                             :null => false
+    t.integer  "portfolio_id",                     :null => false
+    t.integer  "translation_of_id"
+  end
+
+  add_index "portfolio_element", ["creator_id"], :name => "portfolio_element_creator_id"
+  add_index "portfolio_element", ["editor_id"], :name => "portfolio_element_editor_id"
+  add_index "portfolio_element", ["language"], :name => "portfolio_element_language"
+  add_index "portfolio_element", ["language"], :name => "portfolio_element_language_like"
+  add_index "portfolio_element", ["name"], :name => "portfolio_element_name"
+  add_index "portfolio_element", ["name"], :name => "portfolio_element_name_like"
+  add_index "portfolio_element", ["order"], :name => "portfolio_element_order"
+  add_index "portfolio_element", ["portfolio_id"], :name => "portfolio_element_portfolio_id"
+  add_index "portfolio_element", ["publish"], :name => "portfolio_element_publish"
+  add_index "portfolio_element", ["status"], :name => "portfolio_element_status"
+  add_index "portfolio_element", ["status"], :name => "portfolio_element_status_like"
+  add_index "portfolio_element", ["translation_of_id"], :name => "portfolio_element_translation_of_id"
+
+  create_table "portfolio_element_sites", :force => true do |t|
+    t.integer "element_id", :null => false
+    t.integer "site_id",    :null => false
+  end
+
+  add_index "portfolio_element_sites", ["element_id", "site_id"], :name => "portfolio_element_sites_element_id_key", :unique => true
+  add_index "portfolio_element_sites", ["element_id"], :name => "portfolio_element_sites_element_id"
+  add_index "portfolio_element_sites", ["site_id"], :name => "portfolio_element_sites_site_id"
+
+  create_table "portfolio_history", :force => true do |t|
+    t.string   "status",            :limit => 20,  :null => false
+    t.string   "language",          :limit => 8,   :null => false
+    t.integer  "order",                            :null => false
+    t.integer  "creator_id",                       :null => false
+    t.integer  "editor_id",                        :null => false
+    t.datetime "publish",                          :null => false
+    t.datetime "unpublish"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.datetime "deleted_at"
+    t.string   "name",              :limit => 250, :null => false
+    t.string   "photo",             :limit => 100, :null => false
+    t.string   "description",       :limit => 250, :null => false
+    t.text     "body",                             :null => false
+    t.datetime "release_date",                     :null => false
+    t.integer  "portfolio_id",                     :null => false
+    t.integer  "translation_of_id"
+  end
+
+  add_index "portfolio_history", ["creator_id"], :name => "portfolio_history_creator_id"
+  add_index "portfolio_history", ["editor_id"], :name => "portfolio_history_editor_id"
+  add_index "portfolio_history", ["language"], :name => "portfolio_history_language"
+  add_index "portfolio_history", ["language"], :name => "portfolio_history_language_like"
+  add_index "portfolio_history", ["name"], :name => "portfolio_history_name"
+  add_index "portfolio_history", ["name"], :name => "portfolio_history_name_like"
+  add_index "portfolio_history", ["order"], :name => "portfolio_history_order"
+  add_index "portfolio_history", ["portfolio_id"], :name => "portfolio_history_portfolio_id"
+  add_index "portfolio_history", ["publish"], :name => "portfolio_history_publish"
+  add_index "portfolio_history", ["release_date"], :name => "portfolio_history_release_date"
+  add_index "portfolio_history", ["status"], :name => "portfolio_history_status"
+  add_index "portfolio_history", ["status"], :name => "portfolio_history_status_like"
+  add_index "portfolio_history", ["translation_of_id"], :name => "portfolio_history_translation_of_id"
+
+  create_table "portfolio_history_sites", :force => true do |t|
+    t.integer "history_id", :null => false
+    t.integer "site_id",    :null => false
+  end
+
+  add_index "portfolio_history_sites", ["history_id", "site_id"], :name => "portfolio_history_sites_history_id_key", :unique => true
+  add_index "portfolio_history_sites", ["history_id"], :name => "portfolio_history_sites_history_id"
+  add_index "portfolio_history_sites", ["site_id"], :name => "portfolio_history_sites_site_id"
+
+  create_table "portfolio_portfolio", :force => true do |t|
+    t.string   "status",            :limit => 20,  :null => false
+    t.string   "language",          :limit => 8,   :null => false
+    t.integer  "order",                            :null => false
+    t.integer  "creator_id",                       :null => false
+    t.integer  "editor_id",                        :null => false
+    t.datetime "publish",                          :null => false
+    t.datetime "unpublish"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.datetime "deleted_at"
+    t.string   "name",              :limit => 250, :null => false
+    t.string   "slug",              :limit => 250, :null => false
+    t.string   "photo",             :limit => 100, :null => false
+    t.string   "photo_thumb",       :limit => 100, :null => false
+    t.string   "photo_thumb_main",  :limit => 100, :null => false
+    t.string   "description",       :limit => 250, :null => false
+    t.text     "body",                             :null => false
+    t.string   "url",               :limit => 250, :null => false
+    t.integer  "client_id"
+    t.boolean  "on_main",                          :null => false
+    t.datetime "release_date",                     :null => false
+    t.integer  "translation_of_id"
+  end
+
+  add_index "portfolio_portfolio", ["client_id"], :name => "portfolio_portfolio_client_id"
+  add_index "portfolio_portfolio", ["creator_id"], :name => "portfolio_portfolio_creator_id"
+  add_index "portfolio_portfolio", ["editor_id"], :name => "portfolio_portfolio_editor_id"
+  add_index "portfolio_portfolio", ["language"], :name => "portfolio_portfolio_language"
+  add_index "portfolio_portfolio", ["language"], :name => "portfolio_portfolio_language_like"
+  add_index "portfolio_portfolio", ["name"], :name => "portfolio_portfolio_name"
+  add_index "portfolio_portfolio", ["name"], :name => "portfolio_portfolio_name_like"
+  add_index "portfolio_portfolio", ["order"], :name => "portfolio_portfolio_order"
+  add_index "portfolio_portfolio", ["publish"], :name => "portfolio_portfolio_publish"
+  add_index "portfolio_portfolio", ["release_date"], :name => "portfolio_portfolio_release_date"
+  add_index "portfolio_portfolio", ["slug"], :name => "portfolio_portfolio_slug_key", :unique => true
+  add_index "portfolio_portfolio", ["status"], :name => "portfolio_portfolio_status"
+  add_index "portfolio_portfolio", ["status"], :name => "portfolio_portfolio_status_like"
+  add_index "portfolio_portfolio", ["translation_of_id"], :name => "portfolio_portfolio_translation_of_id"
+
+  create_table "portfolio_portfolio_category", :force => true do |t|
+    t.integer "portfolio_id", :null => false
+    t.integer "category_id",  :null => false
+  end
+
+  add_index "portfolio_portfolio_category", ["category_id"], :name => "portfolio_portfolio_category_category_id"
+  add_index "portfolio_portfolio_category", ["portfolio_id", "category_id"], :name => "portfolio_portfolio_category_portfolio_id_key", :unique => true
+  add_index "portfolio_portfolio_category", ["portfolio_id"], :name => "portfolio_portfolio_category_portfolio_id"
+
+  create_table "portfolio_portfolio_sites", :force => true do |t|
+    t.integer "portfolio_id", :null => false
+    t.integer "site_id",      :null => false
+  end
+
+  add_index "portfolio_portfolio_sites", ["portfolio_id", "site_id"], :name => "portfolio_portfolio_sites_portfolio_id_key", :unique => true
+  add_index "portfolio_portfolio_sites", ["portfolio_id"], :name => "portfolio_portfolio_sites_portfolio_id"
+  add_index "portfolio_portfolio_sites", ["site_id"], :name => "portfolio_portfolio_sites_site_id"
+
+  create_table "portfolio_portfolio_type", :force => true do |t|
+    t.integer "portfolio_id", :null => false
+    t.integer "type_id",      :null => false
+  end
+
+  add_index "portfolio_portfolio_type", ["portfolio_id", "type_id"], :name => "portfolio_portfolio_type_portfolio_id_key", :unique => true
+  add_index "portfolio_portfolio_type", ["portfolio_id"], :name => "portfolio_portfolio_type_portfolio_id"
+  add_index "portfolio_portfolio_type", ["type_id"], :name => "portfolio_portfolio_type_type_id"
+
+  create_table "portfolio_type", :force => true do |t|
+    t.string   "status",            :limit => 20,  :null => false
+    t.string   "language",          :limit => 8,   :null => false
+    t.integer  "order",                            :null => false
+    t.integer  "creator_id",                       :null => false
+    t.integer  "editor_id",                        :null => false
+    t.datetime "publish",                          :null => false
+    t.datetime "unpublish"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.datetime "deleted_at"
+    t.string   "name",              :limit => 250, :null => false
+    t.string   "slug",              :limit => 250, :null => false
+    t.string   "description",       :limit => 250, :null => false
+    t.integer  "translation_of_id"
+  end
+
+  add_index "portfolio_type", ["creator_id"], :name => "portfolio_type_creator_id"
+  add_index "portfolio_type", ["editor_id"], :name => "portfolio_type_editor_id"
+  add_index "portfolio_type", ["language"], :name => "portfolio_type_language"
+  add_index "portfolio_type", ["language"], :name => "portfolio_type_language_like"
+  add_index "portfolio_type", ["name"], :name => "portfolio_type_name"
+  add_index "portfolio_type", ["name"], :name => "portfolio_type_name_like"
+  add_index "portfolio_type", ["order"], :name => "portfolio_type_order"
+  add_index "portfolio_type", ["publish"], :name => "portfolio_type_publish"
+  add_index "portfolio_type", ["slug"], :name => "portfolio_type_slug_key", :unique => true
+  add_index "portfolio_type", ["status"], :name => "portfolio_type_status"
+  add_index "portfolio_type", ["status"], :name => "portfolio_type_status_like"
+  add_index "portfolio_type", ["translation_of_id"], :name => "portfolio_type_translation_of_id"
+
+  create_table "portfolio_type_sites", :force => true do |t|
+    t.integer "type_id", :null => false
+    t.integer "site_id", :null => false
+  end
+
+  add_index "portfolio_type_sites", ["site_id"], :name => "portfolio_type_sites_site_id"
+  add_index "portfolio_type_sites", ["type_id", "site_id"], :name => "portfolio_type_sites_type_id_key", :unique => true
+  add_index "portfolio_type_sites", ["type_id"], :name => "portfolio_type_sites_type_id"
+
+  create_table "reversion_revision", :force => true do |t|
+    t.datetime "date_created", :null => false
+    t.integer  "user_id"
+    t.text     "comment",      :null => false
+  end
+
+  add_index "reversion_revision", ["user_id"], :name => "reversion_revision_user_id"
+
+  create_table "reversion_version", :force => true do |t|
+    t.integer "revision_id",                  :null => false
+    t.text    "object_id",                    :null => false
+    t.integer "content_type_id",              :null => false
+    t.string  "format",                       :null => false
+    t.text    "serialized_data",              :null => false
+    t.text    "object_repr",                  :null => false
+    t.integer "type",            :limit => 2, :null => false
+    t.integer "object_id_int"
+  end
+
+  add_index "reversion_version", ["content_type_id"], :name => "reversion_version_content_type_id"
+  add_index "reversion_version", ["object_id_int"], :name => "reversion_version_object_id_int"
+  add_index "reversion_version", ["revision_id"], :name => "reversion_version_revision_id"
+  add_index "reversion_version", ["type"], :name => "reversion_version_type"
+
   create_table "robots_rule", :force => true do |t|
     t.string  "robot",                                     :null => false
     t.decimal "crawl_delay", :precision => 3, :scale => 1
@@ -314,6 +612,12 @@ ActiveRecord::Schema.define(:version => 0) do
     t.string "pattern", :null => false
   end
 
+  create_table "south_migrationhistory", :force => true do |t|
+    t.string   "app_name",  :null => false
+    t.string   "migration", :null => false
+    t.datetime "applied",   :null => false
+  end
+
   create_table "tag", :force => true do |t|
     t.string "name", :limit => 50, :null => false
   end
@@ -330,6 +634,11 @@ ActiveRecord::Schema.define(:version => 0) do
   add_index "tagged_item", ["object_id"], :name => "tagged_item_object_id"
   add_index "tagged_item", ["tag_id", "content_type_id", "object_id"], :name => "tagged_item_tag_id_key", :unique => true
   add_index "tagged_item", ["tag_id"], :name => "tagged_item_tag_id"
+
+  create_table "thumbnail_kvstore", :id => false, :force => true do |t|
+    t.string "key",   :limit => 200, :null => false
+    t.text   "value",                :null => false
+  end
 
   create_table "watchlist_subscription", :force => true do |t|
     t.integer  "user_id",         :null => false
