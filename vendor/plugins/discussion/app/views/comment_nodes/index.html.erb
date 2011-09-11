@@ -1,0 +1,21 @@
+<h1>Listing comment_nodes</h1>
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @comment_nodes.each do |comment_node| %>
+  <tr>
+    <td><%= link_to 'Show', comment_node %></td>
+    <td><%= link_to 'Edit', edit_comment_node_path(comment_node) %></td>
+    <td><%= link_to 'Destroy', comment_node, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Comment node', new_comment_node_path %>
