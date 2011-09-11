@@ -8,6 +8,7 @@ class Post < ActiveRecord::Base
   set_table_name "blog_post"
   belongs_to :site
   belongs_to :author, :class_name => "User"
+  has_many :comment_nodes, :as => :commentable
   
   
   def tease
