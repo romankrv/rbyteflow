@@ -1,4 +1,5 @@
 class CommentNodesController < ApplicationController
+
   # GET /comment_nodes
   # GET /comment_nodes.json
   def index

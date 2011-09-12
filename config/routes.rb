@@ -1,6 +1,7 @@
 Rbyteflow::Application.routes.draw do
   scope "(:locale)", :locale => /en|ru/ do
-  resources :posts
+    resources :posts
+    resources :comment_nodes
   end
   #blog
   match 'logout' => 'user_sessions#destroy', :as => :logout

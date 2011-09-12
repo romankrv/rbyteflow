@@ -1,8 +1,8 @@
 <%= form_for(@comment_node) do |f| %>
+
   <% if @comment_node.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@comment_node.errors.count, "error") %> prohibited this comment_node from being saved:</h2>
-
       <ul>
       <% @comment_node.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -10,6 +10,16 @@
       </ul>
     </div>
   <% end %>
+
+  <div class="field">
+    <%= f.label :body %><br />
+    <%= f.text_area :body %>
+  </div>
+
+  <%= f.hidden_field :reply_to_id %>
+
+  <%= f.hidden_field :commentable_id %>
+  <%= f.hidden_field :commentable_type %>
 
   <div class="actions">
     <%= f.submit %>
