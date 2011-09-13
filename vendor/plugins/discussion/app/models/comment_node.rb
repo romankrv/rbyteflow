@@ -6,6 +6,25 @@ class CommentNode < ActiveRecord::Base
 
   level = nil
 
+  after_create do |obj|
+    if obj.reply_to_id
+      comment_on = obj.class.find(obj.reply_to_id)
+      target_rght = comment_on.rght - 1
+      sql = <<-SQL
+        UPDATE comment_nodes
+        SET rght = rght + 2
+        WHERE commentable_type = %s
+              AND commentable_id = %s
+              AND rght > %s
+      SQL
+      sql = sql % [obj.class.name, obj.id, target_rght]
+      self.connection.execute(sql)
+      obj.lft = target_rght + 1
+      obj.rght = target_rght + 2
+      obj.save()
+    end
+  end
+
   def self.tree_for_object(obj, where={})
     l = obj.comment_nodes.order('lft')
     if where
