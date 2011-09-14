@@ -1,4 +1,4 @@
-It's my training diving in the rails.
+It's my training project for diving into rails.
 
 The main goal of the project - to provide Ruby on Rails based front-end for database of the blogging engine https://bitbucket.org/evotech/ibyteflow
-The single database should be used by both Rails based front-end, and Django based.
+The single database should be used by both, Rails based front-end, and Django based.
