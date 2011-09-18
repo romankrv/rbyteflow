@@ -17,11 +17,37 @@ class CommentNode < ActiveRecord::Base
               AND commentable_id = %s
               AND rght > %s
       SQL
-      sql = sql % [obj.class.name, obj.id, target_rght]
+      sql = sql % [obj.commentable_id, obj.commentable_type, target_rght]
       self.connection.execute(sql)
+
+      sql = <<-SQL
+        UPDATE comment_nodes
+        SET lft = lft + 2
+        WHERE commentable_type = %s
+              AND commentable_id = %s
+              AND lft > %s
+      SQL
+      sql = sql % [obj.commentable_id, obj.commentable_type, target_rght]
+      self.connection.execute(sql)
+
       obj.lft = target_rght + 1
       obj.rght = target_rght + 2
       obj.save()
+    else
+      current_max_rght = self.class.where(
+        :commentable_id => obj.commentable_id,
+        :commentable_type => obj.commentable_type
+      ).maximum("rght")
+      if current_max_rght.nil?
+        obj.lft = 1
+        obj.rght = 2
+      else
+        obj.lft = current_max_rght + 1
+        obj.rght = current_max_rght + 2
+      end
+      obj.object_id = obj.commentable_id
+      # content_type = ?
+      obj.save
     end
   end
 
@@ -32,7 +58,7 @@ class CommentNode < ActiveRecord::Base
     end
     stack = []
     l.each do |i|
-      
+
       stack_copy = stack.clone
       stack_copy.each do |j|
         if j < i.rght
