@@ -1,8 +1,8 @@
 class PostsController < ApplicationController
   # GET /posts
   # GET /posts.xml
+
   def index
-    debugger
     @posts = Post.paginate :page => params[:page], :per_page => 5, :order => 'date DESC'
     # @posts = Post.all
 

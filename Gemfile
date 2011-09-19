@@ -2,10 +2,11 @@ source 'http://rubygems.org'
 
 gem 'rails', '~>3.1.0'
 gem 'will_paginate', '~> 3.0.pre4'
-gem 'authlogic', :git => 'git://github.com/odorcicd/authlogic.git', :branch => 'rails3'
+# gem 'authlogic', :git => 'git://github.com/odorcicd/authlogic.git', :branch => 'rails3'
+# gem 'authlogic', :git => 'git://github.com/binarylogic/authlogic.git'
 gem 'pg'
 
-# gem 'ruby-debug'
+gem 'ruby-debug'
 # gem 'ruby-debug-base'
 # gem 'ruby-debug-ide'
 

@@ -2,19 +2,13 @@ class UserSessionsController < ApplicationController
   before_filter :login_required, :except => [:new, :create]
 
   def new
-    #require 'ruby-debug' ; Debugger.start
-    #debugger
-    #puts logged_in?.inspect
-    @user_session = UserSession.new
-    #redirect_to :controller => "backend" if logged_in?
+    #redirect_to_target_or_default(root_path) if logged_in?
   end
 
   def create
-    #require 'ruby-debug' ; Debugger.start
-    #debugger
-    #puts '#############'
-    @user_session = UserSession.new(params[:user_session])
-    if @user_session.save
+    user = User.find_by_username(params[:user_session][:username])
+    if user && user.valid_password?(params[:user_session][:password])
+      session[:current_user_id] = user.id
       flash[:notice] = "Logged in successfully."
       redirect_to_target_or_default(root_path)
     else
@@ -24,8 +18,7 @@ class UserSessionsController < ApplicationController
   end
 
   def destroy
-    @user_session = UserSession.find
-    @user_session.destroy
+    @_current_user = session[:current_user_id] = nil
     flash[:notice] = "You have been logged out."
     redirect_to root_path
   end

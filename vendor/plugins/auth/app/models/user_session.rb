@@ -1,3 +1,5 @@
-class UserSession < Authlogic::Session::Base
-  app_label = 'auth'
+class UserSession
+  def app_label
+    'auth'
+  end
 end
