@@ -1,5 +1,5 @@
 class UserSession
-  def app_label
+  def self.app_label
     'auth'
   end
 end

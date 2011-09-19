@@ -5,6 +5,10 @@ class CommentNode < ActiveRecord::Base
   set_table_name "comment_nodes"
 
   level = nil
+  
+  def self.app_label
+    'discussion'
+  end
 
   after_create do |obj|
     if obj.reply_to_id
@@ -46,7 +50,7 @@ class CommentNode < ActiveRecord::Base
         obj.rght = current_max_rght + 2
       end
       obj.object_id = obj.commentable_id
-      # content_type = ?
+      obj.content_type = ContentType.get_for_model(obj.commentable_type)
       obj.save
     end
   end

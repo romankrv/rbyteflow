@@ -2,7 +2,7 @@ require "digest/sha1"
 class User < ActiveRecord::Base
   set_table_name "auth_user"
 
-  def app_label
+  def self.app_label
     'auth'
   end
 
